@@ -11,13 +11,9 @@ namespace StudentInfoSystem.Services.StudentCourses
     {
         Task<object> CreateAsync(StudentCourseViewModel model);
 
-        Task<object> FindByIdAsync(int id);
-
-        Task<object> GetListAsync();
+        Task<object> GetAssignedCourse(AssignedCourseQueryViewModel model);
         // bool IsExists(int id);
 
-        Task<object> GetDataTableAsync(DataTable dataTableDto);
-        Task<object> UpdateAsync(StudentCourseViewModel model);
         Task<object> DeleteAsync(int id);
     }
 }

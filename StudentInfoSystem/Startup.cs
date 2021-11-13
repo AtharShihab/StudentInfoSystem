@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using StudentInfoSystem.Data;
 using StudentInfoSystem.Models.Configurations;
 using StudentInfoSystem.Services.Courses;
+using StudentInfoSystem.Services.Semesters;
+using StudentInfoSystem.Services.StudentCourses;
 using StudentInfoSystem.Services.Students;
 
 namespace StudentInfoSystem
@@ -42,6 +44,8 @@ namespace StudentInfoSystem
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IStudentCourseService, StudentCourseService>();
+            services.AddScoped<ISemesterRepo, SemesterRepo>();
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 {

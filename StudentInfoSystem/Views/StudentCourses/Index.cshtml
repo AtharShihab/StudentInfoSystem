@@ -1,0 +1,238 @@
+﻿@model StudentCourseViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section PageHeader{
+    <div class="col-sm-4">
+        <h1 style="color: #18b2c4;border-bottom: 2px solid #18b2c4;font-weight:bolder;">Assign Course To Student</h1>
+    </div>
+    <div class="col-sm-8">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+            <li class="breadcrumb-item active">Assign Courses</li>
+        </ol>
+    </div>
+}
+<hr />
+<section class="content">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <!-- left column -->
+            <div class="col-md-8">
+                <!-- jquery validation -->
+                <div class="card card-custom">
+                    <form id="assignCourse-form" asp-action="Edit">
+
+                        <div class="card-header">
+                            <h3 class="card-title" style="color: #18b2c4;font-weight: bolder;font-size: 22px;">Assign Course</h3>
+                            <div class="float-right">
+                                <input id="assignCourse-btn" type="submit" class="btn btn-info" value="Save" />
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="StudentId" class="control-label"></label>
+                                <select asp-for="StudentId" onchange="onChange(this)" class="form-control select2" style="width:100%">
+                                    <option value="">Select Student</option>
+                                </select>
+                                <span asp-validation-for="StudentId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="SemesterCode" class="control-label"></label>
+                                <select asp-for="SemesterCode" onchange="onChange(this)" class="form-control select2" style="width:100%">
+                                    <option value="">Select Semester</option>
+                                </select>
+                                <span asp-validation-for="SemesterCode" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Course Code</th>
+                                            <th>Course Name</th>
+                                            <th>Select</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="course-table">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        @*<div class="card-footer">
+                            
+                            <a class="btn btn-info" asp-controller="Courses" asp-action="Index">Back to List</a>
+                        </div>*@
+
+                    </form>
+                </div>
+                <!-- /.card -->
+            </div>
+            <!--/.col (left) -->
+            <!-- right column -->
+            <div class="col-md-6">
+
+            </div>
+            <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+
+<div>
+    
+</div>
+
+
+@section Scripts{
+
+    <script>
+        const EndPoint = '@EndPoint.ApiEndpoint';
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        function onChange(selectedObject) {
+            console.log($("#StudentId").val(), $("#SemesterCode").val())
+            
+            let data = {
+                StudentId: document.getElementById("StudentId").value,
+                SemesterCode: document.getElementById("SemesterCode").value
+            }
+
+            $("#course-table").html("")
+            $.ajax({
+                url: EndPoint + '/studentcourses/GetStudentCourses',
+                type: 'POST',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    const courses = data.data;
+                    coursesCount = courses.length;
+                    console.log(data);
+                    $.each(courses,
+                        function (i, course) {
+                            $("#course-table").append("<tr><td><input type='hidden' id='CourseId" + i + "' value=" + course.id + " /><span>" + course.courseCode + "</span></td>" +
+                                "<td><span>" + course.courseName + "</span></td>" +
+                                "<td><input type='checkbox' id='IsSelected" + i + "' value='" + course.isSelected + "' class='form - check - input'/></td>");
+                            $("#IsSelected" + i).prop("checked", course.isSelected);
+                        });
+                    
+                }
+            });
+        }
+        $(document).ready(function () {
+            
+            let coursesCount = 0;
+            @*==Populate Form ==*@
+            $.ajax({
+                url: EndPoint + '/students/GetStudents',
+                type: 'GET',
+                success: function (data) {
+                    const students = data.data;
+                    $.each(students,
+                        function (i, student) {
+                            $("#StudentId").append($("<option />").val(student.id).text(student.name));
+                        });
+                   $.ajax({
+                        url: EndPoint + '/studentcourses/GetSemesters',
+                        type: 'GET',
+                        success: function (data) {
+                            const semesters = data.data;
+                            $.each(semesters,
+                                function (i, semester) {
+                                    $("#SemesterCode").append($("<option />").val(semester.code).text(semester.name));
+                                });
+                            $.ajax({
+                                url: EndPoint + '/studentcourses/GetStudentCourses',
+                                type: 'POST',
+                                data: JSON.stringify({ StudentId: 0, SemesterCode: null }),
+                                dataType: 'json',
+                                contentType: 'application/json; charset=utf-8',
+                                success: function (data) {
+                                    const courses = data.data;
+                                    coursesCount = courses.length;
+                                    $.each(courses,
+                                        function (i, course) {
+                                            $("#course-table").append("<tr><td><input type='hidden' id='CourseId" + i + "' value=" + course.id + " /><span>" + course.courseCode + "</span></td>" +
+                                                "<td><span>" + course.courseName + "</span></td>" +
+                                                "<td><input type='checkbox' id='IsSelected" + i + "' value='" + course.isSelected + "' class='form - check - input'/></td>");
+                                            $("#IsSelected" + i).prop("checked", course.isSelected);
+                                        });
+                    
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+             
+            @*==Populate Form ==*@
+
+
+
+
+            @*==Submit Form==*@
+            $("#assignCourse-btn").click(function (e) {
+                $("#assignCourse-form").submit(function (e) {
+                    e.preventDefault();
+                });
+                let assinedCourses = [];
+                for (let i = 0; i < coursesCount; i++) {
+                    assinedCourses.push({
+                        "Id": $("#CourseId"+ i).val(),
+                        "CourseCode": null,
+                        "CourseName": null,
+                        "IsSelected": $("#IsSelected" + i).is(":checked"),
+                    })
+
+                }
+                let studentCourses = {
+                    "StudentId": $("#StudentId").val(),
+                    "SemesterCode": $("#SemesterCode").val(),
+                    "Courses": assinedCourses,
+                }
+                Swal.fire({
+                    title: 'Are you sure?',
+                    //text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes!'
+                }).then((result) => {
+                    console.log(result.value);
+                    if (result.value) {
+                        $.ajax({
+                            url: EndPoint + '/studentcourses/assigneCourses',
+                            type: 'POST',
+                            data: JSON.stringify(studentCourses),
+                            dataType: 'json',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data, textStatus, xhr) {
+                                let responseCode = xhr.status;
+                                if (responseCode === 200) {
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: "Success " + responseCode,
+                                        text: "Updated Successfully",
+                                    });
+
+                                }
+                            }
+                        });
+
+                    }
+                });
+
+            });
+            @*==Submit Form==*@
+        });
+    </script>
+}
