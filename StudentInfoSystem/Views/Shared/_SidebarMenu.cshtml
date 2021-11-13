@@ -1,0 +1,49 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+    with font-awesome or any other icon font library -->
+        
+        @*====================================*@
+        <li class="nav-item  @((Context.Request.Path.Value.Contains("Students",StringComparison.OrdinalIgnoreCase)
+                            ||Context.Request.Path.Value.Contains("Courses",StringComparison.OrdinalIgnoreCase)
+                            ||Context.Request.Path.Value.Contains("StudentCourses",StringComparison.OrdinalIgnoreCase)) ? "menu-open" : "")">
+            <a href="#" class="nav-link
+               @((Context.Request.Path.Value.Contains("Students",StringComparison.OrdinalIgnoreCase)
+                   ||Context.Request.Path.Value.Contains("Courses",StringComparison.OrdinalIgnoreCase)
+                   ||Context.Request.Path.Value.Contains("StudentCourses",StringComparison.OrdinalIgnoreCase)) ? "active" : "") ">
+                <i class="nav-icon fas fa-users-cog"></i>
+                <p>
+                    Student Management
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item ">
+                    <a href="@Url.Action("Index", "Students")"
+                       class="nav-link  @(Context.Request.Path.Value.Equals(Url.Action("Index", "Students"),StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                        <i class="far fa-dot-circle nav-icon"></i>
+                        <p>Students</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a href="@Url.Action("Index", "Courses")"
+                       class="nav-link  @(Context.Request.Path.Value.Equals(Url.Action("Index", "Courses"),StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                        <i class="far fa-dot-circle nav-icon"></i>
+                        <p>Courses</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a href="@Url.Action("Index", "StudentCourses")"
+                       class="nav-link  @(Context.Request.Path.Value.Equals(Url.Action("Index", "StudentCourses"),StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                        <i class="far fa-dot-circle nav-icon"></i>
+                        <p>Student's Courses</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>

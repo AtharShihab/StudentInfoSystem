@@ -1,0 +1,176 @@
+﻿@model IEnumerable<StudentViewModel> 
+@{
+    ViewData["Title"] = "Students";
+}
+
+@section PageHeader{
+    <div class="col-sm-4">
+        <h1 style="color: #18b2c4;border-bottom: 2px solid #18b2c4;font-weight:bolder;">Students</h1>
+    </div>
+    <div class="col-sm-8">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+            <li class="breadcrumb-item active">Students</li>
+        </ol>
+    </div>
+}
+
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<div class="card card-primary">
+    <div class="card-body table-responsive">
+        <table id="student-table" style="width:100%" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    @*<th>
+            @Html.DisplayNameFor(model => model.Id)
+        </th>*@
+                    <th class="text-center">
+                        SL
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.DOB)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.ContactNo)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.MailingAddress)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Father)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Mother)
+                    </th>
+                    <th class="text-center">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+@section Scripts{
+    <script>
+        
+        $(document).ready(function () {
+            const EndPoint = '@EndPoint.ApiEndpoint';
+            var table = $("#student-table").DataTable({
+                'processing': true,
+                'serverSide': true,
+                "order": [[0, 'desc']],
+                'ajax': {
+                    'url': EndPoint + '/Students/LoadStudentList',
+                    'method': 'POST',
+                    'contentType': 'application/json',
+                    'data': function (d) {
+                        console.log(d);
+                        return JSON.stringify(d);
+
+                    },
+                    'error': function (jqXHR, exception) {
+                        Swal.fire(
+                            "Error " + jqXHR.status,
+                            jqXHR.responseJSON.message,
+                        );
+                    }
+                },
+                "lengthMenu": [[10, 20, 50, 100], [10, 20, 50, 100]],
+                "lengthChange": true,
+                "searching": true,
+                "columns": [
+                    {
+                        data: "id", name: "Id",
+                        render: function (data, type, full, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    //{
+                    //    data: "id", name: "Id"
+                    //},
+                    {
+                        data: "name", name: "Name"
+                    },
+                    {
+                        data: "dob", name: "DOB",
+                        render: function (data, type, student) {
+                            return student.dob;
+                        }
+                    },
+                    {
+                        data: "contactNo", name: "ContactNo"
+                    },
+                    {
+                        data: "mailingAddress", name: "MailingAddress"
+                    },
+                    {
+                        data: "father", name: "Father"
+                    },
+                    {
+                        data: "mother", name: "Mother"
+                    },
+                    {
+                        data: "id",
+                        orderable:false,
+                        render: function (data) {
+                            return "<a class='btn btn-sm btn-success m-1' href='/students/edit/" + data + "'><i class='fas fa-edit'></i></a>" +
+                                "<button class='btn btn-sm btn-danger js-delete m-1' data-student-id=" + data + "><i class='fas fa-trash'/></button>";
+                        }
+                    },
+                ]
+            });
+
+
+            
+
+
+            //handle delete
+            $("#student-table").on("click", ".js-delete", function () {
+                const button = $(this);
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    console.log(result.value);
+                    if (result.value) {
+                        $.ajax({
+                            url: EndPoint + "/students/deletestudent/" + button.attr("data-student-id"),
+                            type: 'POST',
+
+                            success: function (data, textStatus, xhr) {
+                                let responseCode = xhr.status;
+                                if (responseCode === 204) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Deleted ' + responseCode,
+                                        text: 'Deleted successfully.',
+                                    });
+                                    $("#student-table").DataTable().ajax.reload();
+                                }
+                            }
+                        });
+
+                    }
+                });
+
+            });
+        })
+    </script>
+}

@@ -1,0 +1,191 @@
+﻿@model StudentViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+@section PageHeader{
+    <div class="col-sm-4">
+        <h1 style="color: #18b2c4;border-bottom: 2px solid #18b2c4;font-weight:bolder;">Add Student</h1>
+    </div>
+    <div class="col-sm-8">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Students">Students</a></li>
+            <li class="breadcrumb-item active">Add Student</li>
+        </ol>
+    </div>
+}
+
+<hr />
+<section class="content">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <!-- left column -->
+            <div class="col-md-8">
+                <!-- Create Form -->
+                <div class="card card-custom">
+                    <div class="card-header">
+                         <h3 class="card-title pt-2" style="color: #18b2c4;font-weight: bolder;font-size: 22px;">Create Student</h3>
+                    </div>
+                    <form id="createStudent-form">
+                        <div class="card-body">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input required="required" asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="DOB" class="control-label"></label>
+                                    <input asp-for="DOB" class="form-control"/>
+                                    <span asp-validation-for="DOB " class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ContactNo" class="control-label"></label>
+                                <input required="required" asp-for="ContactNo" class="form-control" />
+                                <span asp-validation-for="ContactNo" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="MailingAddress" class="control-label"></label>
+                                <input required="required" asp-for="MailingAddress" class="form-control" />
+                                <span asp-validation-for="MailingAddress" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Father" class="control-label"></label>
+                                <input required="required" asp-for="Father" class="form-control" />
+                                <span asp-validation-for="Father" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label asp-for="FatherOcupation" class="control-label"></label>
+                                <input asp-for="FatherOcupation" class="form-control" />
+                                <span asp-validation-for="FatherOcupation" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="FatherContactNo" class="control-label"></label>
+                                <input required="required" asp-for="FatherContactNo" class="form-control" />
+                                <span asp-validation-for="FatherContactNo" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Mother" class="control-label"></label>
+                                <input required="required" asp-for="Mother" class="form-control" />
+                                <span asp-validation-for="Mother" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="MotherOcupation" class="control-label"></label>
+                                <input required="required" asp-for="MotherOcupation" class="form-control" />
+                                <span asp-validation-for="MotherOcupation" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="MotherContactNo" class="control-label"></label>
+                                <input required="required" asp-for="MotherContactNo" class="form-control" />
+                                <span asp-validation-for="MotherContactNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <input id="createStudent-btn" type="submit" class="btn btn-info m-2" value="Create"/>
+                            <a href="@Url.Action("Index", "Students")" class="btn btn-info">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.card -->
+            </div>
+            <!--/.col (left) -->
+            <!-- right column -->
+            <div class="col-md-6">
+
+            </div>
+            <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+
+@section Scripts {
+    @* <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script> *@
+    @* <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> *@
+<script>
+        $(document).ready(function () {
+            
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            const EndPoint = '@EndPoint.ApiEndpoint';
+
+            
+
+
+            
+
+
+            // Handle Create Product
+            $("#createStudent-btn").click(function (e) {
+                $("#createStudent-form").validate();
+                $("#createStudent-form").submit(function (e) {
+                    e.preventDefault();
+                });
+                let student = {
+                    "Name": $("#Name").val(),
+                    "DOB": $("#DOB").val(),
+                    "ContactNo": $("#ContactNo").val(),
+                    "MailingAddress": $("#MailingAddress").val(),
+                    "Father": $("#Father").val(),
+                    "FatherOcupation": $("#FatherOcupation").val(),
+                    "FatherContactNo": $("#FatherContactNo").val(),
+                    "Mother": $("#Mother").val(),
+                    "MotherOcupation": $("#MotherOcupation").val(),
+                    "MotherContactNo": $("#MotherContactNo").val(),
+                }
+                Swal.fire({
+                    title: 'Are you sure?',
+                    //text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes!'
+                }).then((result) => {
+                    console.log(result.value);
+                    if (result.value) {
+                        $.ajax({
+                            url: EndPoint + '/students/AddStudent',
+                            type: 'POST',
+                            data: JSON.stringify(student),
+                            dataType: 'json',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data, textStatus, xhr) {
+                                let responseCode = xhr.status;
+                                if (responseCode === 201) {
+                                    $("#createStudent-btn").prop('disabled', true);
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: "Success " + responseCode,
+                                        text: "Created Successfully",
+                                    });
+
+                                    setTimeout(redirectFunc, 2000);
+                                    function redirectFunc() {
+
+                                        window.location.href = "@Url.Action("Index","Students")";
+
+                                    }
+
+                                }
+                            }
+                        });
+
+                    }
+                });
+            });
+
+
+        });
+</script>
+}
+
